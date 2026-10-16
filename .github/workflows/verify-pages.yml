@@ -1,0 +1,23 @@
+name: Verify GitHub Pages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check live site
+        run: |
+          set -euo pipefail
+          base="https://navin-suthar.github.io/desi-runner"
+          code=$(curl -sS -L -o /tmp/index.html -w "%{http_code}" "$base/")
+          echo "index_status=$code"
+          echo "index_bytes=$(wc -c < /tmp/index.html)"
+          if grep -q "Desi Dash" /tmp/index.html; then echo "index_has_title=yes"; else echo "index_has_title=no"; fi
+          if grep -q 'src="game.js"' /tmp/index.html; then echo "index_references_game_js=yes"; else echo "index_references_game_js=no"; fi
+          js=$(curl -sS -L -o /tmp/game.js -w "%{http_code}" "$base/game.js")
+          echo "game_js_status=$js"
+          echo "game_js_bytes=$(wc -c < /tmp/game.js)"
+          head -c 200 /tmp/index.html; echo
+          head -c 120 /tmp/game.js; echo
