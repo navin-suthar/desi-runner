@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff9933" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Desi Dash" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>Desi Dash — Rail Runner</title>
+  <meta name="description" content="Desi Dash: an original Indian-themed 3-lane endless runner. Dodge trains, autos and cows, and outrun the TT uncle!" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%23f9b81b%22/%3E%3Ctext x=%228%22 y=%2212%22 font-size=%2210%22 text-anchor=%22middle%22 fill=%22%23a0522d%22%3E%E2%82%B9%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-root">
+    <canvas id="scene"></canvas>
+
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+      <div class="hud-left">
+        <div id="hud-score" class="hud-score">0</div>
+        <div class="hud-row">
+          <span class="coin-ico">₹</span><span id="hud-coins">0</span>
+        </div>
+      </div>
+      <div class="hud-mid">
+        <div id="hud-mult" class="mult">x1</div>
+        <div id="powerups"></div>
+      </div>
+      <div class="hud-right">
+        <button id="btn-mute" class="round-btn" aria-label="Toggle sound" title="Sound (M)">🔊</button>
+        <button id="btn-pause" class="round-btn" aria-label="Pause" title="Pause (P / Esc)">❚❚</button>
+      </div>
+    </div>
+    <div id="toast" class="hidden"></div>
+    <div id="chase-warn" class="hidden">TT UNCLE &amp; HAVALDAR ARE CHASING YOU!</div>
+
+    <!-- Title screen -->
+    <div id="title-screen" class="overlay">
+      <div class="card title-card">
+        <div class="garland" aria-hidden="true"></div>
+        <h1 class="logo"><span class="l1">DESI</span><span class="l2">DASH</span></h1>
+        <p class="hindi" lang="hi">देसी डैश</p>
+        <p class="tagline">Run the rails. Grab the rupees. Outrun the TT Uncle and the Havaldar!</p>
+        <button id="btn-play" class="big-btn">▶ PLAY</button>
+        <p class="best">BEST: <span id="title-best">0</span></p>
+        <div class="howto">
+          <div class="touch"><b>Swipe</b> ← → to change lane, ↑ to jump, ↓ to roll. <b>Tap</b> to start.</div>
+          <div class="kb"><b>← →</b> / <b>A D</b> / swipe: change lane</div>
+          <div class="kb"><b>↑</b> / <b>W</b> / <b>Space</b> / swipe up: jump</div>
+          <div class="kb"><b>↓</b> / <b>S</b> / swipe down: roll</div>
+          <div class="kb"><b>P</b> / <b>Esc</b>: pause &nbsp; <b>M</b>: mute</div>
+        </div>
+        <div class="legend">
+          <span>🪁 Kite Glide</span><span>🧲 Magnet</span><span>✖2 Multiplier</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pause -->
+    <div id="pause-screen" class="overlay hidden">
+      <div class="card">
+        <h2>PAUSED</h2>
+        <p>Chai break! ☕</p>
+        <button id="btn-resume" class="big-btn">▶ RESUME</button>
+        <button id="btn-quit" class="small-btn">MAIN MENU</button>
+      </div>
+    </div>
+
+    <!-- Game over -->
+    <div id="over-screen" class="overlay hidden">
+      <div class="card">
+        <h2 id="over-title">CAUGHT!</h2>
+        <p id="over-sub" class="sub">The TT Uncle wants to see your ticket.</p>
+        <div class="stats">
+          <div><span>SCORE</span><b id="over-score">0</b></div>
+          <div><span>COINS</span><b id="over-coins">0</b></div>
+          <div><span>BEST</span><b id="over-best">0</b></div>
+        </div>
+        <p id="new-best" class="new-best hidden">★ NEW BEST! ★</p>
+        <button id="btn-again" class="big-btn">↻ RUN AGAIN</button>
+        <button id="btn-menu" class="small-btn">MAIN MENU</button>
+      </div>
+    </div>
+
+    <div id="error-screen" class="overlay hidden">
+      <div class="card"><h2>Oops!</h2><p id="error-text">Could not start 3D graphics.</p></div>
+    </div>
+  </div>
+
+  <!-- Three.js from CDN (jsDelivr, with unpkg fallback) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script>
+    if (!window.THREE) document.write('<script src="https://unpkg.com/three@0.160.0/build/three.min.js"><\/script>');
+  </script>
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
